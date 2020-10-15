@@ -1,13 +1,12 @@
-import React from 'react';
+import React from 'react'
+import { socket } from './socket.js'
 
-import './App.css';
-
-import io from 'socket.io-client'
+import Menu from './views/Menu.js'
 
 class App extends React.Component {
   constructor() {
     super()
-    const socket = io('localhost:5000')
+    
     socket.emit('newPlayer', 'USER1')
   }
 
@@ -15,6 +14,7 @@ class App extends React.Component {
     return (
       <div className="app">
         trojkolak
+        <Menu />
       </div>
     )
   }
