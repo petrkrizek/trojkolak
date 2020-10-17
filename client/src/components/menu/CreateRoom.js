@@ -2,10 +2,6 @@ import React from 'react'
 import { socket } from "../../socket.js"
 
 export default class CreateRoom extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-
     createRoom = () => {
         if (this.props.username === '') {
             socket.emit('newPlayer', 'guest')

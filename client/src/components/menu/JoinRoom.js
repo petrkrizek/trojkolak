@@ -2,12 +2,8 @@ import React from 'react'
 import { socket } from "../../socket.js"
 
 export default class JoinRoom extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            roomId: ''
-        }
+    state = {
+        roomId: ''
     }
 
     handleChange = (e) => {

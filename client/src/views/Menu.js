@@ -3,11 +3,8 @@ import CreateRoom from '../components/menu/CreateRoom'
 import JoinRoom from '../components/menu/JoinRoom'
 
 export default class Menu extends React.Component {
-    constructor(props) {
-        super()
-        this.state = {
-            username: ''
-        }
+    state = {
+        username: ''
     }
 
     handleChange = (e) => {

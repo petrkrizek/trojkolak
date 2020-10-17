@@ -1,3 +1,23 @@
 .lobby {
-    
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 10%;
+
+    &__title {
+        font: {
+            size: 30px;
+            weight: 700;
+        }
+    }
+
+    &__teams {
+        display: flex;
+    }
+
+    &__team {
+        padding: 20px;
+        border-radius: 10px;
+        margin: 10px;
+        background-color: $light-grey;
+    }
 }

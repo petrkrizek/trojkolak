@@ -5,34 +5,33 @@ import Menu from './views/Menu.js'
 import Lobby from './views/Lobby.js'
 
 class App extends React.Component {
-	constructor() {
-		super()
-		this.state = {
-			view: 'menu',
-			roomPlayers: [],
-			roomId: ''
-		}
+	state = {
+		view: 'menu',
+		teams: [],
+		roomId: ''
+	}
 
+	componentDidMount() {
 		socket.on('changeView', (view) => {
 			this.setState({
 				view: view
 			})
 		})
-
-
-		socket.on('roomPlayers', (players) => {
-            this.setState({
-                roomPlayers: players
-            })
-        })
+		
+		socket.on('roomTeams', (teams) => {
+			this.setState({
+				teams: teams
+			})
+		})
 
         socket.on('roomId', (id) => {
             this.setState({
                 roomId: id
             })
         })
-
 	}
+
+
 
 	render() {
 		switch(this.state.view) {
@@ -41,7 +40,7 @@ class App extends React.Component {
 			}
 			case "lobby": {
 				return <Lobby 
-					roomPlayers={this.state.roomPlayers}
+					teams={this.state.teams}
 					roomId={this.state.roomId}
 				/>
 			}

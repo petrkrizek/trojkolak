@@ -8,6 +8,10 @@
     border: none;
     border-radius: 5px;
     display: block;
+
+    @media screen and (max-width: 1000px) {
+        font-size: 15px;
+    }
 }
 
 @mixin button {
@@ -20,4 +24,8 @@
     border: none;
     border-radius: 5px;
     display: block;
+    
+    @media screen and (max-width: 1000px) {
+        font-size: 15px;
+    }
 }

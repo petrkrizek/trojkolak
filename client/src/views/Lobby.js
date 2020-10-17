@@ -1,29 +1,26 @@
 import React from 'react'
+import LobbyTeam from '../components/lobby/LobbyTeam'
 
-import { socket } from '../socket.js'
 
 export default class Lobby extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            username: '',
-            team: '',
-            ready: false
-        }
+    state = {
+        username: ''
+    }
+
+    componentDidMount() {
+        console.log(this.props.teams)
     }
 
     render() {
         return (
             <div className="lobby">
-                Lobby, roomId = {this.props.roomId}
-                <div className="players">
-                    players:
-                    <ul>
-                        {this.props.roomPlayers.map((player) => {
-                            return <li>{player.username}</li>
-                        })}
-                    </ul>
+                <h2 className="lobby__title">Lobby</h2>
+                <div className="lobby__teams">
+                    {this.props.teams.map(team => {
+                        return <LobbyTeam team={team} />
+                    })}
                 </div>
+                <div className="lobby__idlink">Game id: {this.props.roomId}</div>
             </div>
         )
     }
