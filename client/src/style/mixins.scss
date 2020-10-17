@@ -1,0 +1,23 @@
+@mixin input {
+    padding: 5px 10px;
+    font: {
+        family: 'Roboto Mono', monospace;
+        size: 20px;
+        weight: 300;
+    }
+    border: none;
+    border-radius: 5px;
+    display: block;
+}
+
+@mixin button {
+    padding: 5px 10px;
+    font: {
+        family: 'Roboto Mono', monospace;
+        size: 20px;
+        weight: 300;
+    }
+    border: none;
+    border-radius: 5px;
+    display: block;
+}

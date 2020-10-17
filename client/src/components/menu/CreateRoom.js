@@ -3,30 +3,23 @@ import { socket } from "../../socket.js"
 
 export default class CreateRoom extends React.Component {
     constructor(props) {
-        super()
-        this.state = {
-            roomName: ''
-        }
-    }
-
-    handleChange = (e) => {
-        this.setState({
-            roomName: e.target.value
-        })
+        super(props)
     }
 
     createRoom = () => {
-        socket.emit('createRoom', this.state.roomName)
-        this.setState({
-            roomName: ''
-        })
+        if (this.props.username === '') {
+            socket.emit('newPlayer', 'guest')
+        } else {
+            socket.emit('newPlayer', this.props.username)
+        }
+        
+        socket.emit('createRoom')
     }
 
     render() {
         return(
             <div className="createroom">
-                <input className="createroom__input" type="text" value={this.state.roomName} onChange={this.handleChange}></input>
-                <button className="createroom__button" onClick={this.createRoom}>Create Room</button>
+                <button className="createroom__button" onClick={this.createRoom}>Create Game</button>
             </div>
         )
     }

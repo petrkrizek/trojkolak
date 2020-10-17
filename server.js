@@ -21,11 +21,15 @@ const gameState = {
 //Methods
 const joinRoom = (socket, room) => {
     room.sockets.push(socket)
+    room.players.push(gameState.players[socket.id])
     socket.join(room.id, () => {
         socket.room = room.id
         console.log(socket.id, " joined ", room.id)
         console.log(gameState.rooms)
     })
+    socket.emit('changeView', 'lobby')
+    io.to(room.id).emit('roomPlayers', room.players)
+    socket.emit('roomId', room.id)
 }
 
 //Main socket.io Loop
@@ -38,17 +42,27 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('createRoom', (roomName) => {
+    socket.on('createRoom', () => {
         //Creates room with unique identifier
+        let roomId = Math.random().toString(36).substring(2, 13);
         const room = {
-            id: uuidv4(),
-            name: roomName,
-            sockets: []
+            id: roomId,
+            sockets: [],
+            players: []
         }
         //Adds room to gamteState and joins the player to it
         gameState.rooms[room.id] = room
         joinRoom(socket, room)
-        
+    })
+
+    socket.on('joinRoom', (roomId) => {
+        //console.log(gameState.rooms[roomId])
+        joinRoom(socket, gameState.rooms[roomId])
+    })
+
+    socket.on('disconnect', () => {
+        gameState.players.filter(p => p.id != socket.id)
+        console.log(gameState.players)
     })
 })
 
