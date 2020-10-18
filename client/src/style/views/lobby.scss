@@ -19,5 +19,31 @@
         border-radius: 10px;
         margin: 10px;
         background-color: $light-grey;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    &__start {
+        @include button;
+        background-color: $green;
+        margin: 10px auto;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .team {
+        &__leave {
+            @include button;
+            margin-top: 5px;
+            z-index: -1;
+            font-size: 15px;
+            background-color: $red;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
 }

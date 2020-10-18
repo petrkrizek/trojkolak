@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const path = require('path')
-const { v4: uuidv4} = require('uuid')
+const {v4:uuidv4} = require('uuid')
 const PORT = process.env.PORT || 5000
 
 
@@ -26,11 +26,11 @@ const joinRoom = (socket, room) => {
         console.log(socket.id, " joined ", room.id)
     })
 
-        
     //Create new team for the player
     let team = {
-        id: socket.id,
-        players: []
+        id: uuidv4(),
+        players: [],
+        points: 0
     }
     team.players.push(gameState.players[socket.id])
     //Team id assigned by first players id
@@ -41,49 +41,95 @@ const joinRoom = (socket, room) => {
     socket.emit('changeView', 'lobby')
 }
 
+joinTeam = (socket, teamId) => {
+    let room = gameState.rooms[socket.room]
+    let team = room.teams.find(t => t.id === teamId)
+    let player = gameState.players[socket.id]
+    if (!team.players.includes(player)) {
+        if (!team.players.includes(player)) {
+            team.players.push(player)
+        }
+        room.teams.map(t => {
+            if (t.players.includes(player) && t.id !== teamId) {
+                t.players = t.players.filter(p => p !== player)
+            }
+        })
+
+        room.teams = room.teams.filter(t => t.players.length > 0)
+        io.to(socket.room).emit('roomTeams', room.teams)
+    }
+}
+
 //Main socket.io Loop
 io.on('connection', (socket) => {
     console.log(socket.id, " connected")
 
     socket.on('newPlayer', (username) => {
         gameState.players[socket.id] = {
-            username: username,
-            points: 0
+            username: username
         }
     })
 
     socket.on('createRoom', () => {
         //Creates room with unique identifier
-        let roomId = /*Math.random().toString(36).substring(2, 13)*/ 'A';
+        let roomId = Math.random().toString(36).substring(2, 13);
         const room = {
             id: roomId,
             sockets: [],
             players: [],
-            teams: []
+            teams: [],
+            leader: socket.id,
+            words: []
         }
         //Adds room to gamteState and joins the player to it
         gameState.rooms[room.id] = room
         joinRoom(socket, room)
+        socket.emit('leader')
     })
 
     socket.on('joinRoom', (roomId) => {
-        joinRoom(socket, gameState.rooms[roomId])
+        if (gameState.rooms[roomId]) {
+            joinRoom(socket, gameState.rooms[roomId])
+        } else {
+            socket.emit('error', 'Room doesn\'t exist.')
+        }
     })
 
     socket.on('joinTeam', (teamId) => {
-        let room = gameState.rooms[socket.room]
-        let team = room.teams.find(t => t.id === teamId)
-        let player = gameState.players[socket.id]
-        if (!team.players.includes(player)) {
-            if (!team.players.includes(player)) {
-                team.players.push(player)
-            }
-            room.teams.map(t => {
-                if (t.players.includes(player) && t.id !== teamId) {
-                    t.players = t.players.filter(p => p !== player)
-                }
-            })
-            io.to(socket.room).emit('roomTeams', room.teams)
+        joinTeam(socket, teamId)
+    })
+
+    socket.on('createTeam', () => {
+        teamId = uuidv4();
+        let team = {
+            id: teamId,
+            players: [],
+            points: 0
+        }
+        gameState.rooms[socket.room].teams.push(team)
+        joinTeam(socket, teamId)
+    })
+
+    socket.on("startGame", () => {
+        io.to(socket.room).emit('changeView', 'words')
+        io.to(socket.room).emit('players', gameState.rooms[socket.room].players)
+    })
+
+    socket.on("addWord", (word) => {
+        let words = gameState.rooms[socket.room].words
+
+        words.push({
+            word: word,
+            author: socket.id
+        })
+
+        if (words.filter(w => w.author === socket.id).length === 5) {
+            socket.emit('maxWords')
+        }
+        io.to(socket.room).emit('words', words.length)
+
+        if (words.length === gameState.rooms[socket.room].players.length * 5) {
+            io.to(socket.room).emit('changeView', 'roundOne')
         }
     })
 
@@ -91,4 +137,3 @@ io.on('connection', (socket) => {
         gameState.players.filter(p => p.id != socket.id)
     })
 })
-

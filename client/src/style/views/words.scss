@@ -1,0 +1,31 @@
+.words {
+    &__input {
+        @include input;
+    }
+
+    &__add {
+        @include button;
+    }
+
+    .progress {
+        clear: both;
+        margin: 20px auto;
+
+        &__bar {
+            position: relative;
+            height: 20px;
+            width: 50vw;
+            margin: 0 auto;
+            border-radius: 10px;
+            border: none;
+            overflow: hidden;
+            background-color: $light-grey;
+        }
+
+        &__filler {
+            background: $green;
+            height: 100%;
+            transition: width .2s ease-in;
+        }
+    }
+}
