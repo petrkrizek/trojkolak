@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
 
     socket.on('createRoom', () => {
         //Creates room with unique identifier
-        let roomId = /*Math.random().toString(36).substring(2, 13)*/ 'test';
+        let roomId = Math.random().toString(36).substring(2, 13);
         const room = {
             id: roomId,
             sockets: [],
@@ -152,6 +152,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on("addWord", (word) => {
+        console.log(word)
         let words = playerRoom(socket).words
 
         //Push word to word array

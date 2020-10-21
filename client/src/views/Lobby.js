@@ -27,7 +27,7 @@ export default class Lobby extends React.Component {
                     
                 </div>
                 {this.props.leader && <button className="lobby__start" onClick={this.startGame}>Start game</button> }
-                <div className="lobby__idlink">Game id: {this.props.roomId}</div>
+                <div className="lobby__idlink">{this.props.roomId}</div>
             </div>
         )
     }

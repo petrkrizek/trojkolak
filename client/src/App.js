@@ -15,29 +15,29 @@ class App extends React.Component {
 		maxwords: false,
 		words: 0,
 		players: 0,
-    username: '',
-    playing: false,
-    guessing: false,
-    time: 0,
-    word: ''
+		username: '',
+		playing: false,
+		guessing: false,
+		time: 0,
+		word: ''
 	}
 
 	componentDidMount() {
 		socket.on('changeView', (view) => {
 			this.setState({
-				view: view
+				view
 			})
 		})
 		
 		socket.on('roomTeams', (teams) => {
 			this.setState({
-				teams: teams
+				teams
 			})
 		})
 
-        socket.on('roomId', (id) => {
+        socket.on('roomId', (roomId) => {
             this.setState({
-                roomId: id
+                roomId
             })
 		})
 		
@@ -49,7 +49,7 @@ class App extends React.Component {
 
 		socket.on('words', (words) => {
 			this.setState({
-				words: words
+				words
 			})
 		})
 
@@ -61,7 +61,7 @@ class App extends React.Component {
 
 		socket.on('players', (players) => {
 			this.setState({
-				players: players
+				players
 			})
     })
     
