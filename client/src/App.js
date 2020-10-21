@@ -4,6 +4,7 @@ import { socket } from './socket.js'
 import Menu from './views/Menu'
 import Lobby from './views/Lobby'
 import Words from './views/Words'
+import Round from './views/Round'
 
 class App extends React.Component {
 	state = {
@@ -13,8 +14,12 @@ class App extends React.Component {
 		leader: false,
 		maxwords: false,
 		words: 0,
-		players: [],
-		username: ''
+		players: 0,
+    username: '',
+    playing: false,
+    guessing: false,
+    time: 0,
+    word: ''
 	}
 
 	componentDidMount() {
@@ -58,8 +63,33 @@ class App extends React.Component {
 			this.setState({
 				players: players
 			})
-		})
-	}
+    })
+    
+    socket.on('playing', () => {
+      this.setState({
+        playing: true
+      })
+    })
+
+    socket.on('guessing', () => {
+      this.setState({
+        guessing: true
+      })
+    })
+
+    socket.on('time', (time) => {
+      this.setState({
+        time: time
+      })
+    })
+
+    socket.on('word', (word) => {
+      this.setState({
+        word: word
+      })
+    })
+  }
+  
 
 	usernameChange = (e) => {
 		this.setState({
@@ -87,9 +117,18 @@ class App extends React.Component {
 				return <Words 
 					words={this.state.words}
 					maxwords={this.state.maxwords}
-					players={this.state.players.length}
+					players={this.state.players}
 				/>
-			}
+      }
+      case "roundOne": {
+        return <Round
+          playing={this.state.playing}
+          guessing={this.state.guessing}
+          word={this.state.word}
+          time={this.state.time}
+          roundNumber={1}
+        />
+      }
 			default: {
 				return 'error'
 			}
