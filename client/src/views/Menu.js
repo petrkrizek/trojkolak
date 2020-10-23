@@ -1,6 +1,6 @@
 import React from 'react'
-import CreateRoom from '../components/menu/CreateRoom'
-import JoinRoom from '../components/menu/JoinRoom'
+import CreateGame from '../components/menu/CreateGame'
+import JoinGame from '../components/menu/JoinGame'
 
 export default class Menu extends React.Component {
     render() {
@@ -14,8 +14,8 @@ export default class Menu extends React.Component {
                     onChange={this.props.handleChange}
                 >                    
                 </input>
-                <CreateRoom username={this.props.username} />
-                <JoinRoom username={this.props.username}/>
+                <CreateGame username={this.props.username} />
+                <JoinGame username={this.props.username} />
             </div>
         )
     }

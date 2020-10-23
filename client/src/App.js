@@ -10,7 +10,7 @@ class App extends React.Component {
 	state = {
 		view: 'menu',
 		teams: [],
-		roomId: '',
+		gameId: '',
 		leader: false,
 		maxwords: false,
 		words: 0,
@@ -19,25 +19,26 @@ class App extends React.Component {
 		playing: false,
 		guessing: false,
 		time: 0,
-		word: ''
+		word: '',
+		error: ''
 	}
 
 	componentDidMount() {
-		socket.on('changeView', (view) => {
+		socket.on('view', (view) => {
 			this.setState({
 				view
 			})
 		})
 		
-		socket.on('roomTeams', (teams) => {
+		socket.on('teams', (teams) => {
 			this.setState({
 				teams
 			})
 		})
 
-        socket.on('roomId', (roomId) => {
+        socket.on('gameId', (gameId) => {
             this.setState({
-                roomId
+                gameId
             })
 		})
 		
@@ -63,31 +64,38 @@ class App extends React.Component {
 			this.setState({
 				players
 			})
-    })
-    
-    socket.on('playing', () => {
-      this.setState({
-        playing: true
-      })
-    })
+		})
 
-    socket.on('guessing', () => {
-      this.setState({
-        guessing: true
-      })
-    })
+		socket.on('playing', () => {
+			this.setState({
+				playing: true
+			})
+		})
 
-    socket.on('time', (time) => {
-      this.setState({
-        time: time
-      })
-    })
+		socket.on('guessing', () => {
+			this.setState({
+				guessing: true
+			})
+		})
 
-    socket.on('word', (word) => {
-      this.setState({
-        word: word
-      })
-    })
+		socket.on('time', (time) => {
+			this.setState({
+				time
+			})
+		})
+
+		socket.on('word', (word) => {
+			this.setState({
+				word
+			})
+		})
+
+		socket.on('error', (error) => {
+			this.setState({
+				error
+			})
+			console.log(error)
+		})
   }
   
 
@@ -108,7 +116,7 @@ class App extends React.Component {
 			case "lobby": {
 				return <Lobby 
 					teams={this.state.teams}
-					roomId={this.state.roomId}
+					gameId={this.state.gameId}
 					leader={this.state.leader}
 					username={this.state.username}
 				/>
@@ -119,16 +127,16 @@ class App extends React.Component {
 					maxwords={this.state.maxwords}
 					players={this.state.players}
 				/>
-      }
-      case "roundOne": {
-        return <Round
-          playing={this.state.playing}
-          guessing={this.state.guessing}
-          word={this.state.word}
-          time={this.state.time}
-          roundNumber={1}
-        />
-      }
+			}
+			case "roundOne": {
+				return <Round
+					playing={this.state.playing}
+					guessing={this.state.guessing}
+					word={this.state.word}
+					time={this.state.time}
+					roundNumber={1}
+				/>
+			}
 			default: {
 				return 'error'
 			}

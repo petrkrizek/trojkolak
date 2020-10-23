@@ -6,12 +6,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from random_words import RandomWords
 
+options = webdriver.ChromeOptions() 
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
 class User:
     def __init__(self, name, roomid = False, leader = False):
         self.name = name
         self.leader = leader
         self.roomid = roomid
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options=options)
         self.driver.get('localhost:3000')
         
 
@@ -20,12 +23,12 @@ class User:
         usernameInput.send_keys(self.name)
 
         if self.leader:
-            createRoom = self.driver.find_element_by_class_name('createroom__button')
+            createRoom = self.driver.find_element_by_class_name('creategame__button')
             createRoom.click()
         else:
-            roomInput = self.driver.find_element_by_class_name('joinroom__input')
+            roomInput = self.driver.find_element_by_class_name('joingame__input')
             roomInput.send_keys(self.roomid)
-            joinRoom = self.driver.find_element_by_class_name('joinroom__button')
+            joinRoom = self.driver.find_element_by_class_name('joingame__button')
             joinRoom.click()
 
     def typeWords(self):
@@ -52,11 +55,13 @@ print(leader.getRoomId())
 
 players = [
     User(name='Player 1', roomid=leader.getRoomId()),
-    User(name='Player 2', roomid=leader.getRoomId())
+    User(name='Player 2', roomid=leader.getRoomId()),
+    User(name='Player 3', roomid=leader.getRoomId())
 ]
 
 for player in players:
     player.join()
+
 
 for player in players:
     player.typeWords()

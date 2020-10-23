@@ -10,8 +10,8 @@ export default class LobbyTeam extends React.Component {
         socket.emit('joinTeam', this.props.team.id)
     }
 
-    createTeam = () => {
-        socket.emit('createTeam')
+    leaveTeam = () => {
+        socket.emit('leaveTeam')
     }
 
     render () {
@@ -21,11 +21,11 @@ export default class LobbyTeam extends React.Component {
 
 
                     {this.props.team.players.map(player => {
-                        return <div className="team__player">{player.username === this.props.username ? player.username + ' (You)' : player.username}</div>
+                        return <div className="team__player" key={player.username}>{player.username === this.props.username ? player.username + ' (You)' : player.username}</div>
                     })}
                 </div>
                 {this.props.team.players.length > 1 && 
-                <div className="team__leave" onClick={this.createTeam}>Leave team</div>}
+                <div className="team__leave" onClick={this.leaveTeam}>Leave team</div>}
             </div>
         )
     }
