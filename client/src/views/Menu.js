@@ -14,8 +14,15 @@ export default class Menu extends React.Component {
                     onChange={this.props.handleChange}
                 >                    
                 </input>
-                <CreateGame username={this.props.username} />
-                <JoinGame username={this.props.username} />
+                <CreateGame
+                    username={this.props.username}
+                    createGame={this.props.createGame}
+                />
+                <JoinGame 
+                    username={this.props.username}
+                    gameIdChange={this.props.gameIdChange}
+                    joinGame={this.props.joinGame}
+                />
             </div>
         )
     }

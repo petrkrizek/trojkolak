@@ -10,12 +10,8 @@ const Game = require('./game.js')
 
 let games = []
 
-
-findGame = (gameId) => {
-    return games.find(g => g.id === gameId)
-}
-
 io.on('connection', socket => {
+    console.log(socket.id, ' connected!')
     socket.on('createGame', username => {
         //Create new Game object and add the player to it
         let game = new Game()
@@ -26,7 +22,7 @@ io.on('connection', socket => {
         socket.emit('leader')
 
         //Save relation for future reference
-        socket.game = game.id
+        socket.game = game
 
         //Save game to list of games
         games.push(game)
@@ -39,30 +35,33 @@ io.on('connection', socket => {
         if (game) {
             socket.join(game.id)
             game.addPlayer(socket.id, username)
-            socket.game = game.id
-
+            socket.game = game
         } else {
             socket.emit('error', 'nogame')
         }
     })
 
     socket.on('joinTeam', teamId => {
-        let game = findGame(socket.game)
-        game.joinTeam(teamId, socket.id)
+        socket.game.joinTeam(teamId, socket.id)
     })
 
     socket.on('leaveTeam', () => {
-        let game = findGame(socket.game)
-        game.makeTeam(socket.id)
+        socket.game.makeTeam(socket.id)
     })
 
     socket.on('startGame', () => {
-        let game = findGame(socket.game)
-        game.start()
+        socket.game.start()
     })
 
     socket.on('addWord', (word) => {
-        let game = findGame(socket.game)
-        game.addWord(word, socket.id)
+        socket.game.addWord(word, socket.id)
+    })
+
+    socket.on('startRound', () => {
+        socket.game.subRound()
+    })
+
+    socket.on('guessedWord', () => {
+        socket.game.guessedWord()
     })
 })

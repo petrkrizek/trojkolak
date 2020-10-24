@@ -1,23 +1,35 @@
 const io = require('./io.js')
 const {v4:uuidv4} = require('uuid')
 
+const shuffleArray = arr => arr
+    .map(a => [Math.random(), a])
+    .sort((a, b) => a[0] - b[0])
+    .map(a => a[1]);
+
 class Game {
     constructor() {
         this.id = Math.random().toString(36).substring(2, 13);
         this.wordCount = 5
-        this.time = 60
+        this.time = 15
         this.leader = ''
+        this.timer = null
         this.state = {
             players: [],
             teams: [],
             words: [],
-            activeWords: []
+            activeWords: [],
+            currentPlayer: 0,
+            currentTeam: 0,
+            currentWord: 0,
+            round: 1,
+            time: 0,
+            view: ''
         }
     }
 
     joinTeam(teamId, playerId) {
-        let {players, teams} = this.state
-        let team = teams.find(t => t.id === teamId)
+        let {players} = this.state
+        let team = this.state.teams.find(t => t.id === teamId)
         let player = players.find(p => p.id === playerId)
 
         //Add player to team if he isn't there already
@@ -26,15 +38,15 @@ class Game {
         }
 
         //Remove player from any other teams
-        teams.map(t => {
+        this.state.teams.map(t => {
             if (t.players.includes(player) && t.id !== teamId) {
                 t.players = t.players.filter(p => p !== player)
             }
         })
 
         //Remove empty teams
-        teams = teams.filter(t => t.players.length > 0)
-        io.to(this.id).emit('teams', teams)
+        this.state.teams = this.state.teams.filter(t => t.players.length > 0)
+        io.to(this.id).emit('teams', this.state.teams)
     }
 
     addPlayer(playerId, username) {
@@ -45,8 +57,9 @@ class Game {
         
         this.makeTeam(playerId)
         
+        this.state.view = 'lobby'
         io.to(playerId)
-            .emit('view', 'lobby')
+            .emit('view', this.state.view)
             .emit('gameId', this.id)
     }
 
@@ -68,8 +81,9 @@ class Game {
 
     start() {
         if (this.validateTeams()) {
+            this.state.view = 'lobby'
             io.to(this.id)
-                .emit('view', 'words')
+                .emit('view', this.state.view)
                 .emit('players', this.state.players.length) 
         }
     }
@@ -82,13 +96,14 @@ class Game {
             return false
         }
 
+        let valid = true
         teams.map(t => {
             if (t.players.length < 2) {
                 io.to(this.id).emit('error', 'oneplayer')
-                return false
+                valid = false
             }
         })
-        return true
+        return valid
     }
 
     addWord(text, playerId) {
@@ -113,7 +128,95 @@ class Game {
     }
 
     startRound() {
-        console.log('round start')
+        let {words} = this.state
+
+        this.state.activeWords = shuffleArray(words)
+        this.state.currentWord = this.state.activeWords[0]
+
+        this.state.view = 'round'
+        io.to(this.id)
+            .emit('view', this.state.view)
+            .emit('round', this.state.round)
+            .emit('time', this.time)
+        
+        this.emitPlaying()
+    }
+
+    emitPlaying() {
+        let {teams, currentTeam, currentPlayer} = this.state
+
+        io.to(teams[currentTeam].players[currentPlayer].id).emit('playing', this.state.currentWord.text)
+
+        teams[currentTeam].players.map(p => {
+            io.to(p.id).emit('guessing')
+        })
+
+    }
+
+    nextPlayer() {
+        io.to(this.id)
+            .emit('nextRound')
+        let {teams, currentTeam, currentPlayer} = this.state
+
+        if (currentTeam === teams.length-1) {
+            if (currentPlayer === teams[currentTeam].players.length - 1) {
+                this.state.currentPlayer = 0
+            } else {
+                this.state.currentPlayer++
+            }
+            this.state.currentTeam = 0
+        } else {
+            this.state.currentTeam++
+        }
+        this.emitPlaying()
+    }
+
+    subRound() {
+        if (!this.state.time > 0) {
+            this.state.time = this.time-1
+        }
+        this.timer = setInterval(() => {
+            this.state.time -= 1
+            io.to(this.id).emit('time', this.state.time)
+            
+            if (this.state.time < 1) {
+                clearInterval(this.timer)
+                this.nextPlayer()
+            }
+        }, 1000)
+    }
+
+    guessedWord() {
+        this.state.teams[this.state.currentTeam].points += 1
+        io.to(this.id).emit('teams', this.state.teams)
+        if (this.state.activeWords.length > 1) {
+            this.state.currentWord = this.state.activeWords.pop()
+            this.emitPlaying()
+        } else {
+            clearInterval(this.timer)
+            this.nextRound()
+        }
+    }
+
+    nextRound() {
+        io.to(this.id)
+            .emit('nextRound')
+
+        this.state.round +=1
+        if (this.state.round <= 3) {
+            this.startRound()
+        } else {
+            this.endGame()
+        }
+    }
+
+    endGame() {
+        let {teams} = this.state
+        console.log('GAME END')
+
+        let leaderboard = teams.sort((a, b) => b.points - a.points)
+
+        console.log(leaderboard)
     }
 }
 

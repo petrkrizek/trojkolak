@@ -6,15 +6,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from random_words import RandomWords
 
-options = webdriver.ChromeOptions() 
-options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
 class User:
     def __init__(self, name, roomid = False, leader = False):
         self.name = name
         self.leader = leader
         self.roomid = roomid
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(executable_path="D:/chromedriver/chromedriver.exe")
         self.driver.get('localhost:3000')
         
 
@@ -33,19 +31,20 @@ class User:
 
     def typeWords(self):
         try:
-            wordInput = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "words__input")))
+            wordInput = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "words__input")))
         finally:
             rw = RandomWords()
             words = rw.random_words(count=5)
             for word in words:
                 wordInput.send_keys(word)
                 wordInput.send_keys(Keys.ENTER)
-
+        self.driver.close()
     def getRoomId(self):
         try:
-            roomId = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "lobby__idlink")))
+            roomId = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "lobby__idlink")))
         finally:
             return roomId.text
+    
 
 
 leader = User(name='Lobby Leader', leader=True)
@@ -61,7 +60,6 @@ players = [
 
 for player in players:
     player.join()
-
 
 for player in players:
     player.typeWords()
