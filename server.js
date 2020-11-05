@@ -1,5 +1,6 @@
 const io = require('./io.js')
 const Game = require('./game.js')
+const { INTERNAL_COMPUTE_OFFSET_SCRIPT } = require('selenium-webdriver/lib/input')
 
 /*
     Error codes
@@ -11,7 +12,7 @@ const Game = require('./game.js')
 let games = []
 
 io.on('connection', socket => {
-    console.log(socket.id, ' connected!')
+    console.log(socket.id, ' connected')
     socket.on('createGame', username => {
         //Create new Game object and add the player to it
         let game = new Game()
@@ -26,23 +27,30 @@ io.on('connection', socket => {
 
         //Save game to list of games
         games.push(game)
+
+        console.log('New game created by ', username)
     })
 
     socket.on('joinGame', data => {
         let {gameId, username} = data
-
-        let game = games.find(g => g.id === gameId) || false
-        if (game) {
+        let game
+        if (game = games.find(g => g.id === gameId)) {
             socket.join(game.id)
             game.addPlayer(socket.id, username)
             socket.game = game
+
         } else {
-            socket.emit('error', 'nogame')
+            //socket.emit('error', 'nogame')
+            console.log('nonexistent game')
         }
     })
 
     socket.on('joinTeam', teamId => {
         socket.game.joinTeam(teamId, socket.id)
+        console.log('-----------')
+        socket.game.state.teams.forEach(team => {
+            console.log(team.players)
+        })
     })
 
     socket.on('leaveTeam', () => {
@@ -55,6 +63,7 @@ io.on('connection', socket => {
 
     socket.on('addWord', (word) => {
         socket.game.addWord(word, socket.id)
+        console.log(word)
     })
 
     socket.on('startRound', () => {

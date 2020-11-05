@@ -187,6 +187,7 @@ class App extends React.Component {
 				return <Round
 					playing={this.state.playing}
 					guessing={this.state.guessing}
+					started={this.state.started}
 					word={this.state.word}
 					time={this.state.time}
 					roundNumber={this.state.round}
@@ -204,4 +205,4 @@ class App extends React.Component {
 	}
 }
 
-export default App;
+export default App

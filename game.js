@@ -7,25 +7,25 @@ const shuffleArray = arr => arr
     .map(a => a[1]);
 
 class Game {
-    constructor() {
-        this.id = Math.random().toString(36).substring(2, 13);
-        this.wordCount = 5
-        this.time = 15
-        this.leader = ''
-        this.timer = null
-        this.state = {
-            players: [],
-            teams: [],
-            words: [],
-            activeWords: [],
-            currentPlayer: 0,
-            currentTeam: 0,
-            currentWord: 0,
-            round: 1,
-            time: 0,
-            view: ''
-        }
+    // id = Math.random().toString(36).substring(2, 13);
+    id = 'test'
+    wordCount = 5
+    time = 15
+    leader = ''
+    timer = null
+    state = {
+        players: [],
+        teams: [],
+        words: [],
+        activeWords: [],
+        currentPlayer: 0,
+        currentTeam: 0,
+        currentWord: 0,
+        round: 1,
+        time: 0,
+        view: ''
     }
+
 
     joinTeam(teamId, playerId) {
         let {players} = this.state
@@ -81,7 +81,8 @@ class Game {
 
     start() {
         if (this.validateTeams()) {
-            this.state.view = 'lobby'
+            console.log('game started')
+            this.state.view = 'words'
             io.to(this.id)
                 .emit('view', this.state.view)
                 .emit('players', this.state.players.length) 
@@ -134,21 +135,27 @@ class Game {
         this.state.currentWord = this.state.activeWords[0]
 
         this.state.view = 'round'
+
+        let time = this.state.time > 0 ? this.state.time : this.time
         io.to(this.id)
             .emit('view', this.state.view)
             .emit('round', this.state.round)
-            .emit('time', this.time)
-        
+            .emit('time', time)        
         this.emitPlaying()
     }
 
     emitPlaying() {
         let {teams, currentTeam, currentPlayer} = this.state
 
-        io.to(teams[currentTeam].players[currentPlayer].id).emit('playing', this.state.currentWord.text)
+        let explainPlayer = teams[currentTeam].players[currentPlayer].id
+        console.log(teams[currentTeam].players[currentPlayer].username + ' is playing')
+        io.to(explainPlayer).emit('playing', this.state.currentWord.text)
 
         teams[currentTeam].players.map(p => {
-            io.to(p.id).emit('guessing')
+            if (p.id !== explainPlayer) {
+                io.to(p.id).emit('guessing')
+                console.log(p.username + ' is guessing')
+            }
         })
 
     }
@@ -172,7 +179,9 @@ class Game {
     }
 
     subRound() {
-        if (!this.state.time > 0) {
+        if (this.state.time > 0) {
+            this.state.time--
+        } else {
             this.state.time = this.time-1
         }
         this.timer = setInterval(() => {
