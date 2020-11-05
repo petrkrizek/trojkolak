@@ -1,0 +1,68 @@
+.round {
+    width: 90%;
+    margin: 20px auto;
+    &__name {
+        font: {
+            size: 20px;
+            weight: 700;
+        }
+    }
+
+    &__username {
+        padding: 30px;
+        font: {
+            size: 15px;
+            weight: 500;
+        }
+    }
+
+    &__timer {
+        text-align: center;
+        font: {
+            size: 30px;
+            weight: 100;
+        }
+    }
+
+    &__start {
+        @include button;
+        margin: 10px auto;
+    }
+
+    &__guessed {
+        @include button;
+        margin: 10px auto;
+        background-color: $green;
+    }
+
+    &__word {
+        font: {
+            size: 40px;
+            weight: 100;
+        }
+        text-align: center;
+    }
+
+    .team {
+        background-color: $light-grey;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px;
+        &__players {
+            padding: 10px;
+        }
+
+        &__player {
+            font: {
+                size: 15px;
+                weight: 100;
+            }
+        }
+        
+    }
+
+    &__teams {
+        display: flex;
+        justify-content: center;
+    }
+}

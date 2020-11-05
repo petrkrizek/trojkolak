@@ -6,7 +6,7 @@ export default class RoundTeam extends React.Component {
             <div className="team">
                 <ul className="team__players">
                     {this.props.players.map(p => {
-                        return <li classname="team__player">{p.username}</li>
+                        return <li className="team__player">{p.username}</li>
                     })}
                 </ul>
                 <div className="team__points">{this.props.points}</div>
