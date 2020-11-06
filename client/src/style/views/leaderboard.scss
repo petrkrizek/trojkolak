@@ -1,0 +1,45 @@
+.leaderboard {
+    &__title {
+        font: {
+            size: 50px;
+            weight: 900;
+        }
+        text-align: center;
+        padding: 20px;
+    }
+    .team {
+        width: 50%;
+        text-align: center;
+        background-color: $light-grey;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px auto;
+        &__players {
+            padding: 10px;
+        }
+
+        &__player {
+            font: {
+                size: 15px;
+                weight: 100;
+            }
+        }
+    }
+
+    &__buttons {
+        width: 40%;
+        margin: 20px auto;
+    }
+
+    &__playagain {
+        @include button;
+        float: left;
+        background-color: $green;
+    }
+
+    &__exit {
+        @include button;
+        float: right;
+        background-color: $red;
+    }
+}

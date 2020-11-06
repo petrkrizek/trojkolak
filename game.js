@@ -256,7 +256,26 @@ class Game {
             io.to(socketId).emit('round', this.state.round)
             this.emitPlaying()
         }
-        
+    }
+
+    playAgain = () => {
+        this.state = {
+            teams: [],
+            words: [],
+            activeWords: [],
+            currentPlayer: 0,
+            currentTeam: 0,
+            currentWord: 0,
+            round: 1,
+            time: 0,
+            view: 'lobby'
+        }
+
+        io.to(this.id).emit('view', this.state.view)
+
+        this.state.players.forEach(player => {
+            this.makeTeam(player.id)
+        })
     }
     
 }

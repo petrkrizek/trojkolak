@@ -5,11 +5,12 @@ import Menu from './views/Menu'
 import Lobby from './views/Lobby'
 import Words from './views/Words'
 import Round from './views/Round'
+import Leaderboard from './views/Leaderboard'
 
 class App extends React.Component {
 	state = {
 		view: 'menu',
-		// view: 'round',
+		// view: 'leaderboard',
 		teams: [],
 		gameId: '',
 		leader: false,
@@ -24,7 +25,8 @@ class App extends React.Component {
 		started: false,
 		time: 0,
 		word: '',
-		error: '',		
+		error: '',
+		leaderboard: []
 	}
 
 	componentDidMount() {
@@ -130,6 +132,10 @@ class App extends React.Component {
 		socket.on('nogame', () => {
 			localStorage.removeItem('tk-uid')
 		})
+
+		socket.on('leaderboard', leaderboard => {
+			this.setState({leaderboard})
+		})
 	}
   
 	createGame = () => {
@@ -171,6 +177,15 @@ class App extends React.Component {
 		})
 	}
 
+	exitGame = () => {
+		localStorage.removeItem('tk-uid')
+		socket.emit('leave')
+	}
+
+	playAgain = () => {
+		socket.emit('playAgain')
+	}
+
 	render() {
 		switch(this.state.view) {
 			case "menu": {
@@ -210,6 +225,14 @@ class App extends React.Component {
 					startRound={this.startRound}
 					guessWord={this.guessWord}
 					round={this.state.round}
+				/>
+			}
+			case "leaderboard": {
+				return <Leaderboard
+					leaderboard={this.state.leaderboard}
+					leader={this.state.leader}
+					playAgain={this.playAgain}
+					exitGame={this.exitGame}
 				/>
 			}
 			default: {

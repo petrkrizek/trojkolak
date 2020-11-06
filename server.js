@@ -120,4 +120,8 @@ io.on('connection', socket => {
         }
     })
 
+    socket.on('playagain', () => {
+        socket.game.playAgain()
+    })
+
 })
