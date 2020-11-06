@@ -61,7 +61,7 @@ io.on('connection', socket => {
         socket.game.start()
     })
 
-    socket.on('addWord', (word) => {
+    socket.on('addWord', word => {
         socket.game.addWord(word, socket.id)
         console.log(word)
     })
@@ -72,5 +72,14 @@ io.on('connection', socket => {
 
     socket.on('guessedWord', () => {
         socket.game.guessedWord()
+    })
+
+    socket.on('canvas-draw', data => {
+        console.log(data)
+        io.emit('canvas-draw', data)
+    })
+
+    socket.on('canvas-isdrawing', data => {
+        io.emit('canvas-isdrawing', data)
     })
 })

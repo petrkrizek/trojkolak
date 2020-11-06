@@ -1,5 +1,4 @@
 import React from 'react'
-import { socket } from "../../socket.js"
 
 export default class CreateGame extends React.Component {
     render() {

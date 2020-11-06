@@ -65,4 +65,13 @@
         display: flex;
         justify-content: center;
     }
+
+    .drawing {
+        &__canvas {
+            border-radius: 10px;
+            background: white;
+            display: block;
+            margin: 10px auto;
+        }
+    }
 }

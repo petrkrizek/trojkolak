@@ -227,6 +227,7 @@ class Game {
 
         console.log(leaderboard)
     }
+    
 }
 
 module.exports = Game

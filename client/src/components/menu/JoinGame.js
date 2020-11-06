@@ -1,5 +1,4 @@
 import React from 'react'
-import { socket } from "../../socket.js"
 
 export default class joinGame extends React.Component {
     state = {
@@ -12,7 +11,7 @@ export default class joinGame extends React.Component {
         return(
             <div className="joingame">
                 <input className="joingame__input" placeholder="Enter game id" onChange={this.props.gameIdChange}></input>
-                <button className="joingame__button" onClick="play" onClick={this.props.joinGame}>Join Game</button>
+                <button className="joingame__button" onClick={this.props.joinGame}>Join Game</button>
             </div>
         )
     }

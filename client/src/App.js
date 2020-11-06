@@ -8,7 +8,8 @@ import Round from './views/Round'
 
 class App extends React.Component {
 	state = {
-		view: 'menu',
+		//view: 'menu',
+		view: 'round',
 		teams: [],
 		gameId: '',
 		leader: false,
@@ -16,7 +17,8 @@ class App extends React.Component {
 		words: 0,
 		players: 0,
 		username: '',
-		round: 0,
+		// round: 0,
+		round: 3,
 		playing: false,
 		guessing: false,
 		started: false,
@@ -195,7 +197,7 @@ class App extends React.Component {
 					teams={this.state.teams}
 					startRound={this.startRound}
 					guessWord={this.guessWord}
-
+					round={this.state.round}
 				/>
 			}
 			default: {
