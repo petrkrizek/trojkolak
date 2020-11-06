@@ -8,8 +8,8 @@ import Round from './views/Round'
 
 class App extends React.Component {
 	state = {
-		//view: 'menu',
-		view: 'round',
+		view: 'menu',
+		// view: 'round',
 		teams: [],
 		gameId: '',
 		leader: false,
@@ -17,8 +17,8 @@ class App extends React.Component {
 		words: 0,
 		players: 0,
 		username: '',
-		// round: 0,
-		round: 3,
+		round: 0,
+		// round: 3,
 		playing: false,
 		guessing: false,
 		started: false,
@@ -28,8 +28,8 @@ class App extends React.Component {
 	}
 
 	componentDidMount() {
-		if (localStorage.getItem('gameId')) {
-			socket.emit('reconnect')
+		if (localStorage.getItem('tk-uid')) {
+			socket.emit('reconnection', localStorage.getItem('tk-uid'))
 		}
 
 		socket.on('view', view => {
@@ -117,6 +117,18 @@ class App extends React.Component {
 				error
 			})
 			console.log(error)
+		})
+
+		socket.on('uid', id => {
+			localStorage.setItem('tk-uid', id)
+		})
+
+		socket.on('username', username => {
+			this.setState({username})
+		})
+
+		socket.on('nogame', () => {
+			localStorage.removeItem('tk-uid')
 		})
 	}
   

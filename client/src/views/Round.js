@@ -13,8 +13,7 @@ export default class Round extends React.Component {
                 {this.props.playing && !this.props.started && <button className="round__start" onClick={this.props.startRound}>Start round</button>}
                 {this.props.playing && this.props.started && <button className="round__guessed" onClick={this.props.guessWord}>Guessed!</button>}
                 {(this.props.playing || this.props.guessing) && this.props.started && <div className="round__word">{this.props.word}</div>}
-                {this.props.round === 3 && <DrawingCanvas />}
-                <PreviewCanvas />
+                {this.props.playing ? (this.props.round === 3 && <DrawingCanvas />) : (this.props.round === 3 && <PreviewCanvas/>)}
                 <div className="round__teams">
                     {this.props.teams.map(t => {
                         return <RoundTeam

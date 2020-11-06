@@ -49,9 +49,10 @@ class Game {
         io.to(this.id).emit('teams', this.state.teams)
     }
 
-    addPlayer(playerId, username) {
+    addPlayer(playerId, userId, username) {
         this.state.players.push({
             id: playerId,
+            uid: userId,
             username: username
         })
         
@@ -219,13 +220,43 @@ class Game {
         }
     }
 
-    endGame() {
+    endGame = () => {
         let {teams} = this.state
         console.log('GAME END')
 
         let leaderboard = teams.sort((a, b) => b.points - a.points)
 
-        console.log(leaderboard)
+        io.to(this.id).emit('view', 'end')
+        io.to(this.id).emit('leaderboard', leaderboard)
+    }
+
+    handleReconnect(playerId, socketId) {
+        this.state.players.find(p => p.uid === playerId).id = socketId
+
+        io.to(socketId)
+        .emit('gameId', this.id)
+        .emit('view', this.state.view)
+        .emit('teams', this.state.teams)
+        .emit('username', this.state.players.find(p => p.uid === playerId).username)
+        if (this.leader === playerId) {
+            io.to(socketId).emit('leader')
+        }
+        if (this.state.view === 'lobby') {
+
+        }
+        if (this.state.view === 'words') {
+            io.to(socketId)
+            .emit('words', this.state.words)
+
+            if (words.filter(w => w.author === socketId).length === 5) {
+                io.to(socketId).emit('maxWords')
+            }
+        }
+        if (this.state.view === 'round') {
+            io.to(socketId).emit('round', this.state.round)
+            this.emitPlaying()
+        }
+        
     }
     
 }
