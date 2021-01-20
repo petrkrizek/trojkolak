@@ -22,7 +22,7 @@ export default class Lobby extends React.Component {
                 <h2 className="lobby__title">Lobby</h2>
                 <div className="lobby__teams">
                     {this.props.teams.map(team => {
-                        return <LobbyTeam key={team.id} username={this.props.username} team={team} />
+                        return <LobbyTeam key={team.id} username={this.props.username} team={team} inTeam={team.players.find(p => p.username === this.props.username)}/>
                     })}
                     
                 </div>

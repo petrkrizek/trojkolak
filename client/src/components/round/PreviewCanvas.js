@@ -36,9 +36,22 @@ export default class DrawingCanvas extends React.Component {
                 prevPos: {offsetX, offsetY}
             })
         })
+
+        socket.on('guessed', () => {
+            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        })
+
+        this.resizeCanvas()
+
+        window.addEventListener('resize', () => {
+            this.resizeCanvas()
+        })
     }
 
-
+    resizeCanvas = () => {
+        this.ctx.canvas.width  = window.innerWidth / 100 * 60;
+        this.ctx.canvas.height = window.innerWidth / 100 * 40;
+    }
 
     render() {
         return (

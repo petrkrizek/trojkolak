@@ -4,13 +4,11 @@
     margin-top: 10%;
 
     &__title {
-        font: {
-            size: 30px;
-            weight: 700;
-        }
+        @include title;
     }
 
     &__teams {
+        margin-top: 2%;
         display: flex;
     }
 
@@ -43,6 +41,19 @@
 
             &:hover {
                 cursor: pointer;
+            }
+        }
+
+        &__player {
+            font: {
+                size: 20px;
+                weight: 100;
+            }
+
+            @media screen and (max-width: 1000px) {
+                font: {
+                    size: 12px;
+                }
             }
         }
     }

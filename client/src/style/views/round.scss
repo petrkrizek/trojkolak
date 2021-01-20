@@ -1,12 +1,18 @@
 .round {
-    width: 90%;
-    margin: 20px auto;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 5%;
+
     &__name {
-        font: {
-            size: 20px;
-            weight: 700;
+        @include title;
+        
+        &--drawing {
+            writing-mode: vertical-lr;
+            text-orientation: sideways;
         }
     }
+
+
 
     &__username {
         padding: 30px;
@@ -14,25 +20,59 @@
             size: 15px;
             weight: 500;
         }
+
+        float: left;
+
+        &--drawing {
+            display: none;
+        }
     }
+
+
 
     &__timer {
         text-align: center;
         font: {
-            size: 30px;
+            size: 35px;
             weight: 100;
         }
+
+        @media screen and (max-width: 1000px) {
+            font-size: 20px;
+        }
+
+        &--drawing {
+            float: left;
+            margin-top: 20px;
+        }
     }
+
 
     &__start {
         @include button;
         margin: 10px auto;
+
+        &--drawing {
+            float: left;
+            clear: both;
+            margin-top: 20px;
+        }
     }
 
     &__guessed {
         @include button;
         margin: 10px auto;
         background-color: $green;
+        font-size: 30px;
+
+
+        
+
+        &--drawing {
+            float: left;
+            clear: both;
+            margin-top: 20px;
+        }
     }
 
     &__word {
@@ -40,8 +80,20 @@
             size: 40px;
             weight: 100;
         }
+        color: black;
+        background-color: white;
+        border-radius: 5px;
+        padding: 40px 10px 40px 10px;
         text-align: center;
+
+        &--drawing {
+            position: fixed;
+            bottom: 5vh;
+            padding: 10px;
+        }
     }
+
+
 
     .team {
         background-color: $light-grey;
@@ -57,6 +109,19 @@
                 size: 15px;
                 weight: 100;
             }
+
+            @media screen and (max-width: 1000px) {
+                font-size: 12px;
+            }
+        }
+
+        &__points {
+            text-align: center;
+            font: {
+                size: 15px;
+                weight: 700;
+            }
+            margin-top: 20px;
         }
         
     }
@@ -64,14 +129,30 @@
     &__teams {
         display: flex;
         justify-content: center;
+        position: absolute;
+        bottom: 2vw;
+
+        &--drawing {
+            display: none;
+        }
     }
 
     .drawing {
         &__canvas {
+            
             border-radius: 10px;
             background: white;
             display: block;
             margin: 10px auto;
+            
+
+                position: fixed;
+                right: 5vw;
+                top: 5vh;
+
+            
+            
         }
+
     }
 }

@@ -10,7 +10,6 @@ import Leaderboard from './views/Leaderboard'
 class App extends React.Component {
 	state = {
 		view: 'menu',
-		// view: 'leaderboard',
 		teams: [],
 		gameId: '',
 		leader: false,
@@ -19,7 +18,6 @@ class App extends React.Component {
 		players: 0,
 		username: '',
 		round: 0,
-		// round: 3,
 		playing: false,
 		guessing: false,
 		started: false,
@@ -30,14 +28,23 @@ class App extends React.Component {
 	}
 
 	componentDidMount() {
-		if (localStorage.getItem('tk-uid')) {
+		
+		/* if (localStorage.getItem('tk-uid')) {
 			socket.emit('reconnection', localStorage.getItem('tk-uid'))
-		}
-
+		} */
+		
 		socket.on('view', view => {
 			this.setState({
 				view
 			})
+
+			if (this.state.view === 'words') {
+				for (let i = 0; i < 5; i++) {
+					window.setTimeout(() => {
+						socket.emit('addWord', Math.random().toString(36).substring(2,7))
+					}, 500)
+				}
+			}
 		})
 
 		socket.on('round', round => {
@@ -110,11 +117,27 @@ class App extends React.Component {
 			this.setState({
 				playing: false,
 				guessing: false,
+				started: false,
 				word: ''
 			})
 		})
 
-		socket.on('error', error => {
+		socket.on('reset', () => {
+			this.setState({
+				teams: [],
+				maxwords: false,
+				words: 0,
+				round: 0,
+				playing: false,
+				guessing: false,
+				started: false,
+				time: 0,
+				word: '',
+				error: '',
+			})
+		})
+
+		socket.on('err', error => {
 			this.setState({
 				error
 			})
@@ -183,7 +206,7 @@ class App extends React.Component {
 	}
 
 	playAgain = () => {
-		socket.emit('playAgain')
+		socket.emit('playagain')
 	}
 
 	render() {

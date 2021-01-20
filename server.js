@@ -40,25 +40,38 @@ io.on('connection', socket => {
         console.log('New game created by ', username)
     })
 
+    socket.on('leave', () =>  {
+        socket.game.removePlayer(socket.id)
+        socket.game = false
+        users = users.filter(u => u.socket !== socket)
+        socket.emit('view', 'menu')
+
+        //add remove leader method
+    })
+
     socket.on('joinGame', data => {
         let {gameId, username} = data
         let game
         let userId = uuidv4()
         if (game = games.find(g => g.id === gameId)) {
-            socket.join(game.id)
-            game.addPlayer(socket.id, userId, username)
+            if (game.state.view === 'lobby') {
+                socket.join(game.id)
+                game.addPlayer(socket.id, userId, username)
 
-            socket.game = game
+                socket.game = game
 
-            //Store data for reconnection
-            users.push({
-                id: userId,
-                socket: socket,
-                game: game
-            })
-            io.to(socket.id).emit('uid', userId)
+                //Store data for reconnection
+                users.push({
+                    id: userId,
+                    socket: socket,
+                    game: game
+                })
+                io.to(socket.id).emit('uid', userId)
+            } else {
+                socket.emit('err', 'inprogress')
+            }
         } else {
-            //socket.emit('error', 'nogame')
+            //socket.emit('err', 'nogame')
             console.log('nonexistent game')
         }
     })
@@ -99,11 +112,6 @@ io.on('connection', socket => {
 
     socket.on('canvas-isdrawing', data => {
         io.emit('canvas-isdrawing', data)
-    })
-
-    socket.on('leave', () => {
-        socket.game = false
-        users = users.filter(u => u.socket === socket)
     })
 
     socket.on('reconnection', id => {

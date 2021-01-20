@@ -24,7 +24,7 @@ export default class LobbyTeam extends React.Component {
                         return <div className="team__player" key={player.username}>{player.username === this.props.username ? player.username + ' (You)' : player.username}</div>
                     })}
                 </div>
-                {this.props.team.players.length > 1 && 
+                {this.props.team.players.length > 1 && this.props.inTeam &&
                 <div className="team__leave" onClick={this.leaveTeam}>Leave team</div>}
             </div>
         )

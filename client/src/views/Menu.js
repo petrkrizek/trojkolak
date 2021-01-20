@@ -6,6 +6,7 @@ export default class Menu extends React.Component {
     render() {
         return (
             <div className="menu">
+                <h1 className="menu__title">TROJKOLÁK</h1>
                 <input
                     className="usernameInput"
                     placeholder="Enter username"

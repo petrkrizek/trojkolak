@@ -7,8 +7,8 @@ const shuffleArray = arr => arr
     .map(a => a[1]);
 
 class Game {
-    // id = Math.random().toString(36).substring(2, 13);
-    id = 'test'
+    id = Math.random().toString(36).substring(2, 13);
+    // id = 'test'
     wordCount = 5
     time = 15
     leader = ''
@@ -23,7 +23,7 @@ class Game {
         currentWord: 0,
         round: 1,
         time: 0,
-        view: ''
+        view: 'lobby'
     }
 
 
@@ -50,6 +50,7 @@ class Game {
     }
 
     addPlayer(playerId, userId, username) {
+ 
         this.state.players.push({
             id: playerId,
             uid: userId,
@@ -58,10 +59,11 @@ class Game {
         
         this.makeTeam(playerId)
         
-        this.state.view = 'lobby'
+
         io.to(playerId)
             .emit('view', this.state.view)
             .emit('gameId', this.id)
+
     }
 
     makeTeam(playerId) {
@@ -94,14 +96,14 @@ class Game {
         let {teams} = this.state
 
         if (teams.length === 1) {
-            io.to(this.id).emit('error', 'oneteam')
+            io.to(this.id).emit('err', 'oneteam')
             return false
         }
 
         let valid = true
         teams.map(t => {
             if (t.players.length < 2) {
-                io.to(this.id).emit('error', 'oneplayer')
+                io.to(this.id).emit('err', 'oneplayer')
                 valid = false
             }
         })
@@ -182,15 +184,19 @@ class Game {
     subRound() {
         if (this.state.time > 0) {
             this.state.time--
+            
         } else {
-            this.state.time = this.time-1
+            this.state.time = this.time
+            io.to(this.id).emit('time', this.state.time)
         }
         this.timer = setInterval(() => {
             this.state.time -= 1
             io.to(this.id).emit('time', this.state.time)
-            
+
             if (this.state.time < 1) {
+                io.to(this.id).emit('time', this.state.time)
                 clearInterval(this.timer)
+                io.to(this.id).emit(this.time)
                 this.nextPlayer()
             }
         }, 1000)
@@ -199,6 +205,7 @@ class Game {
     guessedWord() {
         this.state.teams[this.state.currentTeam].points += 1
         io.to(this.id).emit('teams', this.state.teams)
+        io.to(this.id).emit('guessed')
         if (this.state.activeWords.length > 1) {
             this.state.currentWord = this.state.activeWords.pop()
             this.emitPlaying()
@@ -226,8 +233,12 @@ class Game {
 
         let leaderboard = teams.sort((a, b) => b.points - a.points)
 
-        io.to(this.id).emit('view', 'end')
+        io.to(this.id).emit('view', 'leaderboard')
         io.to(this.id).emit('leaderboard', leaderboard)
+    }
+
+    removePlayer(playerId) {
+        //TODO remove player from game if not leader
     }
 
     handleReconnect(playerId, socketId) {
@@ -259,7 +270,10 @@ class Game {
     }
 
     playAgain = () => {
+        var {players} = this.state
+        console.log(this.state)
         this.state = {
+            players: [],
             teams: [],
             words: [],
             activeWords: [],
@@ -270,12 +284,13 @@ class Game {
             time: 0,
             view: 'lobby'
         }
+        console.log(this.state)
 
-        io.to(this.id).emit('view', this.state.view)
+        players.forEach(p => this.addPlayer(p.id, p.uid, p.username))
 
-        this.state.players.forEach(player => {
-            this.makeTeam(player.id)
-        })
+        console.log(this.state)
+
+        
     }
     
 }

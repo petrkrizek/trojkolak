@@ -1,11 +1,10 @@
 .leaderboard {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 10%;
+
     &__title {
-        font: {
-            size: 50px;
-            weight: 900;
-        }
-        text-align: center;
-        padding: 20px;
+        @include title;
     }
     .team {
         width: 50%;

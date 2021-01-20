@@ -1,6 +1,11 @@
 .menu {
     width: 35%;
     margin: 0 auto;
+    margin-top: 10%;
+
+    &__title {
+        @include title;
+    }
 
     @media screen and (max-width: 1000px) {
         width: 80%;
@@ -24,6 +29,12 @@
             float: left;
             border-radius: 5px 0px 0px 5px;
             padding-right: 0;
+
+            @media screen and (max-width: 1000px) {
+                float: none;
+                @include button;
+                width: 100%;
+            }
         }
 
         &__button {
@@ -31,13 +42,19 @@
             float: left;
             @include button;
             border-radius: 0px 5px 5px 0px;
-            padding-left: 0;
+            padding-left: 0px;
+
+            @media screen and (max-width: 1000px) {
+                float: none;
+                @include button;
+            }
         }
+
     }
 
     .creategame {
         margin-top: 5%;
-
+        
         &__button {
             @include button;
         }

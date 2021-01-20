@@ -10,7 +10,7 @@
     display: block;
 
     @media screen and (max-width: 1000px) {
-        font-size: 15px;
+        font-size: 12px;
     }
 }
 
@@ -26,6 +26,19 @@
     display: block;
     
     @media screen and (max-width: 1000px) {
-        font-size: 15px;
+        font-size: 12px;
+    }
+}
+
+@mixin title {
+    font: {
+        size: 60px;
+        weight: 900;
+    }
+
+    @media screen and (max-width: 1000px) {
+        font: {
+            size: 25px;
+        }
     }
 }
